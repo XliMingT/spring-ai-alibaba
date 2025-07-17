@@ -53,6 +53,7 @@ import com.alibaba.cloud.ai.example.manus.llm.LlmService;
 import com.alibaba.cloud.ai.example.manus.planning.PlanningFactory.ToolCallBackContext;
 import com.alibaba.cloud.ai.example.manus.planning.executor.PlanExecutor;
 import com.alibaba.cloud.ai.example.manus.recorder.PlanExecutionRecorder;
+import com.alibaba.cloud.ai.example.manus.recorder.entity.ExecutionStatus;
 import com.alibaba.cloud.ai.example.manus.recorder.entity.ThinkActRecord;
 import com.alibaba.cloud.ai.example.manus.tool.TerminableTool;
 import com.alibaba.cloud.ai.example.manus.tool.ToolCallBiFunctionDef;
@@ -319,7 +320,7 @@ public class DynamicAgent extends ReActAgent {
 					userInputService.removeFormInputTool(getCurrentPlanId());
 
 					// 记录成功完成的动作结果
-					recordActionResult(actToolInfoList, lastToolCallResult, "COMPLETED", null, false);
+					recordActionResult(actToolInfoList, lastToolCallResult, ExecutionStatus.FINISHED, null, false);
 
 					return new AgentExecResult(lastToolCallResult, AgentState.COMPLETED);
 				}
@@ -329,7 +330,7 @@ public class DynamicAgent extends ReActAgent {
 			}
 
 			// 记录成功的动作结果
-			recordActionResult(actToolInfoList, lastToolCallResult, "SUCCESS", null, false);
+			recordActionResult(actToolInfoList, lastToolCallResult, ExecutionStatus.RUNNING, null, false);
 
 			return new AgentExecResult(lastToolCallResult, AgentState.IN_PROGRESS);
 		}
@@ -346,7 +347,7 @@ public class DynamicAgent extends ReActAgent {
 				}
 			}
 
-			recordActionResult(actToolInfoList, null, "FAILED", e.getMessage(), false);
+			recordActionResult(actToolInfoList, null, ExecutionStatus.RUNNING, e.getMessage(), false);
 
 			userInputService.removeFormInputTool(getCurrentPlanId()); // Clean up on error
 			processMemory(toolExecutionResult); // Process memory even on error
@@ -411,7 +412,7 @@ public class DynamicAgent extends ReActAgent {
 				userInputService.removeFormInputTool(getCurrentPlanId());
 
 				// 记录输入超时的动作结果
-				recordActionResult(actToolInfoList, "Input timeout occurred", "TIMEOUT",
+				recordActionResult(actToolInfoList, "Input timeout occurred", ExecutionStatus.RUNNING,
 						"Input timeout occurred for FormInputTool", false);
 
 				return new AgentExecResult("Input timeout occurred.", AgentState.IN_PROGRESS);
@@ -424,7 +425,7 @@ public class DynamicAgent extends ReActAgent {
 	 * Record action result with simplified parameters
 	 */
 	private void recordActionResult(List<ThinkActRecord.ActToolInfo> actToolInfoList, String actionResult,
-			String status, String errorMessage, boolean subPlanCreated) {
+			ExecutionStatus status, String errorMessage, boolean subPlanCreated) {
 
 		String toolName = null;
 		String toolParameters = null;

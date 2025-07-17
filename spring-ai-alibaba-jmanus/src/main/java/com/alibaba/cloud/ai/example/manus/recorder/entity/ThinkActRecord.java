@@ -89,7 +89,7 @@ public class ThinkActRecord {
 	private String actionResultImage;
 
 	// Status of this think-act cycle (success, failure, etc.)
-	private String status;
+	private ExecutionStatus status;
 
 	// Error message if the cycle encountered problems
 	private String errorMessage;
@@ -150,7 +150,7 @@ public class ThinkActRecord {
 	/**
 	 * Record the end of action phase
 	 */
-	public void finishAction(String actionResult, String status) {
+	public void finishAction(String actionResult, ExecutionStatus status) {
 		this.actEndTime = LocalDateTime.now();
 		this.actionResult = actionResult;
 		this.status = status;
@@ -161,7 +161,7 @@ public class ThinkActRecord {
 	 */
 	public void recordError(String errorMessage) {
 		this.errorMessage = errorMessage;
-		this.status = "ERROR";
+		this.status = ExecutionStatus.RUNNING;
 	}
 
 	/**
@@ -273,19 +273,19 @@ public class ThinkActRecord {
 		this.actionResult = actionResult;
 	}
 
-	public String getActionResultImage() {
-		return actionResultImage;
-	}
+    public String getActionResultImage() {
+        return actionResultImage;
+    }
 
-	public void setActionResultImage(String actionResultImage) {
-		this.actionResultImage = actionResultImage;
-	}
+    public void setActionResultImage(String actionResultImage) {
+        this.actionResultImage = actionResultImage;
+    }
 
-	public String getStatus() {
+	public ExecutionStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(ExecutionStatus status) {
 		this.status = status;
 	}
 
